@@ -1,4 +1,4 @@
-module app-server
+module mikke-server
 
 go 1.22.2
 
