@@ -1,0 +1,28 @@
+version: "3.9"
+services:
+  app:
+    image: mikke-app
+    build:
+      args:
+        - target=dev
+    env_file:
+      - .env.container
+    volumes:
+      - .:/app
+    ports:
+      - "18000:8080"
+    links:
+      - mikke-db
+  todo-db:
+    image: mysql:8.0.29
+    platform: linux/amd64
+    container_name: mikke-db
+    env_file:
+      - .env.db
+    volumes:
+      - mikke-db-data:/var/lib/mysql
+      - $PWD/tools/mysql/conf.d:/etc/mysql/conf.d:cached
+    ports:
+      - "33306:3306"
+volumes:
+  mikke-db-data:
