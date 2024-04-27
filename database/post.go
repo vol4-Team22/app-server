@@ -31,3 +31,12 @@ func (r Repository) ListPosts(ctx context.Context, db Queryer) (domain.Posts, er
 	}
 	return posts, nil
 }
+
+func (r Repository) GetPost(ctx context.Context, db Queryer, postId domain.PostID) (domain.Post, error) {
+	post := domain.Post{}
+	sql := `SELECT post_id, user_id, title, comment, created, modified FROM post WHERE post_id = ?`
+	if err := db.GetContext(ctx, &post, sql, int(postId)); err != nil {
+		return domain.Post{}, err
+	}
+	return post, nil
+}
