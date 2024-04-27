@@ -29,5 +29,9 @@ func NewMux(ctx context.Context, cfg *config.Config) (http.Handler, func(), erro
 		Validator: v,
 	}
 	mux.Post("/post", ps.ServeHTTP)
+	lp := &handler.ListPosts{
+		Usecase: usecase.ListPostsUsecase{DB: db, Repo: &r},
+	}
+	mux.Get("/list", lp.ServeHTTP)
 	return mux, cleanup, err
 }
