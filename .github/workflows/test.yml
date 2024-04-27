@@ -18,7 +18,7 @@ jobs:
         env:
           MYSQL_ALLOW_EMPTY_PASSWORD: yes
           MYSQL_DATABASE: mikke
-          MYSQL_USER: user
+          MYSQL_USER: mikke
           MYSQL_PASSWORD: password
       redis:
         image: redis
@@ -36,7 +36,7 @@ jobs:
       - uses: actions/checkout@v3
       - run: |
           go install github.com/sqldef/sqldef/cmd/mysqldef@latest
-          mysqldef -u user -p password -h 127.0.0.1 -P 3306 mikke < ./tools/mysql/schema.sql
+          mysqldef -u mikke -p password -h 127.0.0.1 -P 3306 mikke < ./tools/mysql/schema.sql
       - run: go test ./... -coverprofile=coverage.out
       - name: report coverage
         uses: k1LoW/octocov-action@v0

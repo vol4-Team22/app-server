@@ -25,10 +25,10 @@ test: ## Execute tests
 	go test -race -shuffle=on ./...
 
 dry-migrate: ## Try migration
-	mysqldef -u mikke -p mikke -h 127.0.0.1 -P 33306 mikke --dry-run < ./tools/mysql/schema.sql
+	mysqldef -u mikke -p password -h 127.0.0.1 -P 33306 mikke --dry-run < ./tools/mysql/schema.sql
 
 migrate:  ## Execute migration
-	mysqldef -u mikke -p mikke -h 127.0.0.1 -P 33306 mikke < ./tools/mysql/schema.sql
+	mysqldef -u mikke -p password -h 127.0.0.1 -P 33306 mikke < ./tools/mysql/schema.sql
 
 generate: ## Generate codes
 	go generate ./...
