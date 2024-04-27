@@ -9,15 +9,6 @@ import (
 	"net/http"
 )
 
-type PostQuestion struct {
-	Usecase   usecase.PostUsecase
-	Validator *validator.Validate
-}
-
-type PostQuestionsUsecace interface {
-	PostQuestion(ctx context.Context, user_id int, title string, comment string) (*domain.Post, error)
-}
-
 func (p PostQuestion) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 	var b struct {
@@ -44,4 +35,13 @@ func (p PostQuestion) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	RespondJSON(ctx, w, nil, http.StatusOK)
+}
+
+type PostQuestion struct {
+	Usecase   usecase.PostUsecase
+	Validator *validator.Validate
+}
+
+type PostQuestionsUsecace interface {
+	PostQuestion(ctx context.Context, user_id int, title string, comment string) (*domain.Post, error)
 }
