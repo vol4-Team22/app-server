@@ -24,7 +24,7 @@ func NewMux(ctx context.Context, cfg *config.Config) (http.Handler, func(), erro
 	if err != nil {
 		return nil, cleanup, err
 	}
-	ps := &handler.PostQuestion{
+	ps := &handler.SendPost{
 		Usecase:   usecase.PostUsecase{DB: db, Repo: &r},
 		Validator: v,
 	}

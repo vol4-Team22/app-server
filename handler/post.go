@@ -12,7 +12,7 @@ import (
 	"time"
 )
 
-func (p PostQuestion) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+func (p SendPost) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 	var b struct {
 		Title   string `json:"title" validate:"required"`
@@ -30,7 +30,7 @@ func (p PostQuestion) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		}, http.StatusInternalServerError)
 	}
 	UserID := 7777
-	_, err := p.Usecase.PostQuestion(ctx, UserID, b.Title, b.Comment)
+	_, err := p.Usecase.SendPost(ctx, UserID, b.Title, b.Comment)
 	if err != nil {
 		RespondJSON(ctx, w, &ErrResponse{
 			Message: err.Error(),
@@ -103,6 +103,15 @@ type post_detail struct {
 	Modified time.Time     `json:"modified"`
 }
 
+type SendPost struct {
+	Usecase   usecase.PostUsecase
+	Validator *validator.Validate
+}
+
+type PostQuestionsUsecace interface {
+	SendPost(ctx context.Context, user_id int, title string, comment string) (*domain.Post, error)
+}
+
 type ListPosts struct {
 	Usecase usecase.ListPostsUsecase
 }
@@ -117,13 +126,4 @@ type GetPost struct {
 
 type GetPostUsecase interface {
 	GetPost(ctx context.Context, postId int) (*domain.Post, error)
-}
-
-type PostQuestion struct {
-	Usecase   usecase.PostUsecase
-	Validator *validator.Validate
-}
-
-type PostQuestionsUsecace interface {
-	PostQuestion(ctx context.Context, user_id int, title string, comment string) (*domain.Post, error)
 }

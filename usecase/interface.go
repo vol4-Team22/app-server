@@ -7,7 +7,7 @@ import (
 )
 
 type PostAdder interface {
-	PostQuestion(ctx context.Context, db database.Execer, p *domain.Post) error
+	SendPost(ctx context.Context, db database.Execer, p *domain.Post) error
 }
 
 type PostLister interface {

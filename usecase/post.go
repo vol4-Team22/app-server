@@ -12,13 +12,13 @@ type PostUsecase struct {
 	DB   database.Execer
 }
 
-func (p *PostUsecase) PostQuestion(ctx context.Context, user_id int, title string, comment string) (*domain.Post, error) {
+func (p *PostUsecase) SendPost(ctx context.Context, user_id int, title string, comment string) (*domain.Post, error) {
 	post := &domain.Post{
 		UserID:  domain.UserID(user_id),
 		Title:   title,
 		Comment: comment,
 	}
-	err := p.Repo.PostQuestion(ctx, p.DB, post)
+	err := p.Repo.SendPost(ctx, p.DB, post)
 	if err != nil {
 		return nil, err
 	}

@@ -5,7 +5,7 @@ import (
 	"mikke-server/domain"
 )
 
-func (r Repository) PostQuestion(ctx context.Context, db Execer, p *domain.Post) error {
+func (r Repository) SendPost(ctx context.Context, db Execer, p *domain.Post) error {
 	// TODO: 認証機能を実装後変更
 	// 現在はすべて7777として登録
 	p.Created = r.Clocker.Now()
