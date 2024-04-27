@@ -51,7 +51,7 @@ $ make migrate
 ```
 </details>
 
-### `/questions`
+### `/lists`
 - すべての投稿を取得する
 <details>
 <summary>output</summary>
@@ -59,25 +59,20 @@ $ make migrate
 ```json
 [
   {
-    "post_id": 1,
-    "title": "ここにタイトルが入る",
-    "created_at": "2024-01-01 17:51:04.789463"
+    "post_id": 3,
+    "title": "介護アプリの開発",
+    "created": "2024-04-27T06:49:01.803146Z"
   },
   {
     "post_id": 2,
-    "title": "2つ目の投稿のタイトル",
-    "created_at": "2024-01-02 12:34:56.789010"
-  },
-  {
-    "post_id": 3,
-    "title": "最後の投稿のタイトル",
-    "created_at": "2024-01-03 09:21:45.123456"
+    "title": "サンプルタイトル",
+    "created": "2024-04-27T06:11:18.298827Z"
   }
 ]
 ```
 </details>
 
-### `/question?postid={id}`
+### `/get?postid={id}`
 - クエリパラメータ(`post_id`)で詳細取得
 <details>
 <summary>output</summary>
