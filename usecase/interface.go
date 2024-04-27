@@ -13,3 +13,7 @@ type PostAdder interface {
 type PostLister interface {
 	ListPosts(ctx context.Context, db database.Queryer) (domain.Posts, error)
 }
+
+type PostGeter interface {
+	GetPost(ctx context.Context, db database.Queryer, postId domain.PostID) (domain.Post, error)
+}

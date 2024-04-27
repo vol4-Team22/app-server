@@ -37,3 +37,16 @@ func (p *ListPostsUsecase) ListPosts(ctx context.Context) (domain.Posts, error) 
 	}
 	return posts, nil
 }
+
+func (u GetPostUsecase) GetPost(ctx context.Context, postId int) (domain.Post, error) {
+	post, err := u.Repo.GetPost(ctx, u.DB, domain.PostID(postId))
+	if err != nil {
+		return domain.Post{}, fmt.Errorf("failed to get: %w", err)
+	}
+	return post, nil
+}
+
+type GetPostUsecase struct {
+	Repo PostGeter
+	DB   database.Queryer
+}
