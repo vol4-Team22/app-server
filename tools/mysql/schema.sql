@@ -4,7 +4,7 @@ CREATE TABLE `user`
     `user_name`     varchar(20) NOT NULL COMMENT 'ユーザー名',
     `password` VARCHAR(80) NOT NULL COMMENT 'パスワードハッシュ',
     `role`     VARCHAR(80) NOT NULL COMMENT 'ロール',
-    `created_at`  DATETIME(6) NOT NULL COMMENT 'レコード作成日時',
+    `created`  DATETIME(6) NOT NULL COMMENT 'レコード作成日時',
     `modified` DATETIME(6) NOT NULL COMMENT 'レコード修正日時',
     PRIMARY KEY (`user_id`),
     UNIQUE KEY `uix_name` (`user_name`) USING BTREE
