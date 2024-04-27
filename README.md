@@ -38,7 +38,7 @@ $ make migrate
 
 [//]: # (</details>)
 
-### `/post`
+### **POST** `/post`
 - 投稿する
 <details>
 <summary>input</summary>
@@ -51,7 +51,7 @@ $ make migrate
 ```
 </details>
 
-### `/lists`
+### **GET** `/lists`
 - すべての投稿を取得する
 <details>
 <summary>output</summary>
@@ -72,19 +72,20 @@ $ make migrate
 ```
 </details>
 
-### `/get?postid={id}`
-- クエリパラメータ(`post_id`)で詳細取得
+### **GET** `/post/{post_id}`
+- クエリパラメータではない
 <details>
 <summary>output</summary>
+例えば`/post/4`をGETで叩くと以下が得られる
 
 ```json
 {
-  "user_id": "E724D1CE-396C-4C67-B8E7-495F9E842AEB",
-  "post_id":  1,
-  "title": "ここにタイトルが入る",
-  "comment": "ここにコメントが入る",
-  "created_at": "2024-01-01 17:51:04.789463",
-  "updated_at": "2024-01-01 17:51:04.789463"
+  "post_id": 4,
+  "user_ID": 7777,
+  "title": "学習アプリの開発",
+  "comment": "Swiftで書きたい",
+  "created": "2024-04-27T12:59:07.379881Z",
+  "modified": "2024-04-27T12:59:07.379881Z"
 }
 ```
 </details>
