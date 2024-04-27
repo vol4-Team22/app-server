@@ -3,10 +3,12 @@ package handler
 import (
 	"context"
 	"encoding/json"
+	"github.com/go-chi/chi"
 	"github.com/go-playground/validator/v10"
 	"mikke-server/domain"
 	"mikke-server/usecase"
 	"net/http"
+	"strconv"
 	"time"
 )
 
@@ -58,10 +60,47 @@ func (p ListPosts) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	RespondJSON(ctx, w, rsp, http.StatusOK)
 }
 
+func (p GetPost) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+	ctx := r.Context()
+	postIDStr := chi.URLParam(r, "post_id")
+	postID, err := strconv.Atoi(postIDStr)
+	if err != nil {
+		RespondJSON(ctx, w, &ErrResponse{
+			Message: err.Error(),
+		}, http.StatusInternalServerError)
+		return
+	}
+	post, err := p.Usecase.GetPost(ctx, postID)
+	if err != nil {
+		RespondJSON(ctx, w, &ErrResponse{
+			Message: err.Error(),
+		}, http.StatusInternalServerError)
+		return
+	}
+	rsp := post_detail{
+		PostID:   post.PostID,
+		UserID:   post.UserID,
+		Title:    post.Title,
+		Comment:  post.Comment,
+		Created:  post.Created,
+		Modified: post.Modified,
+	}
+	RespondJSON(ctx, w, rsp, http.StatusOK)
+}
+
 type post struct {
 	PostID  domain.PostID `json:"post_id"`
 	Title   string        `json:"title"`
 	Created time.Time     `json:"created"`
+}
+
+type post_detail struct {
+	PostID   domain.PostID `json:"post_id"`
+	UserID   domain.UserID `json:"user_ID"`
+	Title    string        `json:"title"`
+	Comment  string        `json:"comment"`
+	Created  time.Time     `json:"created"`
+	Modified time.Time     `json:"modified"`
 }
 
 type ListPosts struct {
@@ -70,6 +109,14 @@ type ListPosts struct {
 
 type ListPostsUsecase interface {
 	ListPosts(ctx context.Context) (domain.Posts, error)
+}
+
+type GetPost struct {
+	Usecase usecase.GetPostUsecase
+}
+
+type GetPostUsecase interface {
+	GetPost(ctx context.Context, postId int) (*domain.Post, error)
 }
 
 type PostQuestion struct {
