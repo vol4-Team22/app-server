@@ -12,3 +12,5 @@ type Post struct {
 	Created  time.Time `json:"created" db:"created"`
 	Modified time.Time `json:"modified" db:"modified"`
 }
+
+type Posts []*Post
