@@ -13,3 +13,5 @@ type Reply struct {
 	Created  time.Time `json:"created" db:"created"`
 	Modified time.Time `json:"modified" db:"modified"`
 }
+
+type Replies []*Reply
