@@ -3,12 +3,13 @@ package handler
 import (
 	"context"
 	"encoding/json"
-	"github.com/go-chi/chi"
-	"github.com/go-playground/validator/v10"
 	"mikke-server/domain"
 	"mikke-server/usecase"
 	"net/http"
 	"strconv"
+
+	"github.com/go-chi/chi"
+	"github.com/go-playground/validator/v10"
 )
 
 func (p SendReply) ServeHTTP(w http.ResponseWriter, r *http.Request) {

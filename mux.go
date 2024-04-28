@@ -2,14 +2,15 @@ package main
 
 import (
 	"context"
-	"github.com/go-chi/chi"
-	"github.com/go-playground/validator/v10"
 	"mikke-server/config"
 	"mikke-server/database"
 	"mikke-server/handler"
 	"mikke-server/tools/clock"
 	"mikke-server/usecase"
 	"net/http"
+
+	"github.com/go-chi/chi"
+	"github.com/go-playground/validator/v10"
 )
 
 func NewMux(ctx context.Context, cfg *config.Config) (http.Handler, func(), error) {
