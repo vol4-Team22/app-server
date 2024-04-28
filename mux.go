@@ -37,6 +37,11 @@ func NewMux(ctx context.Context, cfg *config.Config) (http.Handler, func(), erro
 		Usecase: usecase.GetPostUsecase{DB: db, Repo: &r},
 	}
 	mux.Get("/post/{post_id}", lt.ServeHTTP)
+	sr := &handler.SendReply{
+		Usecase:   usecase.SendReplyUsecase{DB: db, Repo: &r},
+		Validator: v,
+	}
+	mux.Post("/reply", sr.ServeHTTP)
 	lr := &handler.ListReplies{
 		Usecase: usecase.ListRepliesUsecase{DB: db, Repo: &r},
 	}
