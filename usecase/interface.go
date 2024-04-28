@@ -17,3 +17,7 @@ type PostLister interface {
 type PostGeter interface {
 	GetPost(ctx context.Context, db database.Queryer, postId domain.PostID) (domain.Post, error)
 }
+
+type ReplyLister interface {
+	ListReplies(ctx context.Context, db database.Queryer, postId domain.PostID) (domain.Replies, error)
+}
