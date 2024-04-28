@@ -18,6 +18,10 @@ type PostGeter interface {
 	GetPost(ctx context.Context, db database.Queryer, postId domain.PostID) (domain.Post, error)
 }
 
+type ReplyAdder interface {
+	SendReply(ctx context.Context, db database.Execer, p *domain.Reply) error
+}
+
 type ReplyLister interface {
 	ListReplies(ctx context.Context, db database.Queryer, postId domain.PostID) (domain.Replies, error)
 }
