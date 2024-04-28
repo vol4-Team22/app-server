@@ -2,12 +2,49 @@ package handler
 
 import (
 	"context"
+	"encoding/json"
 	"github.com/go-chi/chi"
+	"github.com/go-playground/validator/v10"
 	"mikke-server/domain"
 	"mikke-server/usecase"
 	"net/http"
 	"strconv"
 )
+
+func (p SendReply) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+	ctx := r.Context()
+	var b struct {
+		PostID  int    `json:"post_id" validate:"required"`
+		Title   string `json:"title" validate:"required"`
+		Comment string `json:"comment" validate:"required"`
+	}
+	if err := json.NewDecoder(r.Body).Decode(&b); err != nil {
+		RespondJSON(ctx, w, &ErrResponse{
+			Message: err.Error(),
+		}, http.StatusInternalServerError)
+		return
+	}
+	if err := p.Validator.Struct(b); err != nil {
+		RespondJSON(ctx, w, &ErrResponse{
+			Message: err.Error(),
+		}, http.StatusInternalServerError)
+	}
+	UserID := 7777
+	reply := &domain.Reply{
+		PostID:  domain.PostID(b.PostID),
+		UserID:  domain.UserID(UserID),
+		Title:   b.Title,
+		Comment: b.Comment,
+	}
+	_, err := p.Usecase.SendReply(ctx, reply)
+	if err != nil {
+		RespondJSON(ctx, w, &ErrResponse{
+			Message: err.Error(),
+		}, http.StatusInternalServerError)
+		return
+	}
+	RespondJSON(ctx, w, nil, http.StatusOK)
+}
 
 func (p ListReplies) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
@@ -33,6 +70,15 @@ func (p ListReplies) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		})
 	}
 	RespondJSON(ctx, w, rsp, http.StatusOK)
+}
+
+type SendReply struct {
+	Usecase   usecase.SendReplyUsecase
+	Validator *validator.Validate
+}
+
+type SendReplyUsecase interface {
+	SendReply(ctx context.Context, reply *domain.Reply) (*domain.Reply, error)
 }
 
 type ListReplies struct {
