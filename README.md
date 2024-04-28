@@ -1,6 +1,10 @@
 # Mikke-Server
-> [!CAUTION]
-> 実運用する際は鍵を新たに生成して、秘密鍵は絶対に公開しないでください。
+> [!WARNING]
+> Authentication feature is not yet available.
+
+[//]: # (> [!CAUTION])
+
+[//]: # (> 実運用する際は鍵を新たに生成して、秘密鍵は絶対に公開しないでください。)
 ## Start the server
 Create a Docker image
 ```zsh
