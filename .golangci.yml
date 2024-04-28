@@ -1,0 +1,16 @@
+linters-settings:
+  govet:
+    check-shadowing: false
+  gocyclo:
+    min-complexity: 50
+
+linters:
+  disable-all: true
+  enable:
+    - goimports
+    - deadcode
+    - errcheck
+    - gofmt
+    - govet
+    - staticcheck
+    - whitespace

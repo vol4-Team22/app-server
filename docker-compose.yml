@@ -1,0 +1,37 @@
+version: "3.9"
+services:
+  app:
+    image: mikke-app
+    build:
+      args:
+        - target=dev
+    environment:
+      MIKKE_ENV: dev
+      PORT: 8080
+      MIKKE_DB_HOST: mikke-db
+      MIKKE_DB_PORT: 3306
+      MIKKE_DB_USER: mikke
+      MIKKE_DB_PASSWARD: password
+      MIKKE_DB_DATABASE: mikke
+    volumes:
+      - .:/app
+    ports:
+      - "18000:8080"
+    links:
+      - mikke-db
+  mikke-db:
+    image: mysql:8.0.29
+    platform: linux/amd64
+    container_name: mikke-db
+    environment:
+      MYSQL_ALLOW_EMPTY_PASSWORD: "yes"
+      MYSQL_USER: mikke
+      MYSQL_PASSWORD: password
+      MYSQL_DATABASE: mikke
+    volumes:
+      - mikke-db-data:/var/lib/mysql
+      - $PWD/tools/mysql/conf.d:/etc/mysql/conf.d:cached
+    ports:
+      - "33306:3306"
+volumes:
+  mikke-db-data:
