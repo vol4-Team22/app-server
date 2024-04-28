@@ -76,7 +76,7 @@ $ make migrate
 - クエリパラメータではない
 <details>
 <summary>output</summary>
-例えば`/post/4`をGETで叩くと以下が得られる
+例えば /post/4 をGETで叩くと以下が得られる
 
 ```json
 {
@@ -87,5 +87,36 @@ $ make migrate
   "created": "2024-04-27T12:59:07.379881Z",
   "modified": "2024-04-27T12:59:07.379881Z"
 }
+```
+</details>
+
+### **GET** `reply/list/{post_id}`
+- クエリパラメータではない
+<details>
+<summary>output</summary>
+例えば /reply/list/4 をGETで叩くと以下が得られる.
+古い順にソートされて出力される
+
+```json
+[
+  {
+    "reply_id": 1,
+    "post_id": 4,
+    "user_id": 7777,
+    "title": "swift使ったことない",
+    "comment": "別の言語じゃだめですか？？",
+    "created": "2024-04-28T10:54:35Z",
+    "modified": "2024-04-28T10:54:36Z"
+  },
+  {
+    "reply_id": 2,
+    "post_id": 4,
+    "user_id": 7777,
+    "title": "自分もない！！",
+    "comment": "何かいい言語ありますかー？？",
+    "created": "2024-04-28T10:55:20Z",
+    "modified": "2024-04-28T10:55:22Z"
+  }
+]
 ```
 </details>
