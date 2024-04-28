@@ -90,7 +90,20 @@ $ make migrate
 ```
 </details>
 
-### **GET** `reply/list/{post_id}`
+### **POST** `/reply`
+<details>
+<summary>input</summary>
+
+```json
+{
+  "post_id": 4,
+  "title": "直接APIを叩かせよう！！",
+  "comment": "UXなんて知らん！GUI作りたいなら自分で作れ！！笑"
+}
+```
+</details>
+
+### **GET** `/reply/list/{post_id}`
 - クエリパラメータではない
 <details>
 <summary>output</summary>
