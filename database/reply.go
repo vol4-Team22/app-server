@@ -47,7 +47,8 @@ func (r Repository) ListReplies(ctx context.Context, db Queryer, postId domain.P
 			"created",
 			"modified",
 		).
-		From("reply").
+		From("reply as r").
+		Where(squirrel.Eq{"r.post_id": postId}).
 		OrderBy("created ASC")
 	query, params, err := q.ToSql()
 	if err != nil {
