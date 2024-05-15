@@ -69,8 +69,22 @@ func (r Repository) ListPosts(ctx context.Context, db Queryer) ([]*domain.Post, 
 
 func (r Repository) GetPost(ctx context.Context, db Queryer, postId domain.PostID) (domain.Post, error) {
 	post := domain.Post{}
-	sql := `SELECT post_id, user_id, title, comment, created, modified FROM post WHERE post_id = ?`
-	if err := db.GetContext(ctx, &post, sql, int(postId)); err != nil {
+	q := squirrel.
+		Select(
+			"post_id",
+			"user_id",
+			"title",
+			"comment",
+			"created",
+			"modified",
+		).
+		From("post as p").
+		Where(squirrel.Eq{"p.post_id": postId})
+	query, params, err := q.ToSql()
+	if err != nil {
+		return domain.Post{}, fmt.Errorf("error in ToSql")
+	}
+	if err := db.GetContext(ctx, &post, query, params...); err != nil {
 		return domain.Post{}, err
 	}
 	return post, nil
