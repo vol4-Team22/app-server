@@ -38,7 +38,6 @@ func (r Repository) ListPosts(ctx context.Context, db Queryer) ([]*domain.Post, 
 		).
 		From("post").
 		OrderBy("created DESC")
-	fmt.Println(q)
 	query, params, err := q.ToSql()
 	if err != nil {
 		return nil, fmt.Errorf("error in ToSql")
