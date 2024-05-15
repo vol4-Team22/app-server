@@ -2,6 +2,7 @@ package database
 
 import (
 	"context"
+	"github.com/Masterminds/squirrel"
 	"mikke-server/domain"
 )
 
@@ -10,8 +11,19 @@ func (r Repository) SendReply(ctx context.Context, db Execer, p *domain.Reply) e
 	// 現在はすべて7777として登録
 	p.Created = r.Clocker.Now()
 	p.Modified = p.Created
-	sql := `INSERT INTO reply (post_id, user_id, title, comment, created, modified) VALUES (?, ?, ?, ?, ? ,?)`
-	result, err := db.ExecContext(ctx, sql, int(p.PostID), int(p.UserID), p.Title, p.Comment, p.Created, p.Modified)
+	query, param, err := squirrel.
+		Insert("reply").
+		Columns(
+			"post_id",
+			"user_id",
+			"title",
+			"comment",
+			"created",
+			"modified",
+		).
+		Values(int(p.PostID), int(p.UserID), p.Title, p.Comment, p.Created, p.Modified).
+		ToSql()
+	result, err := db.ExecContext(ctx, query, param...)
 	if err != nil {
 		return err
 	}
