@@ -37,8 +37,23 @@ func (r Repository) SendReply(ctx context.Context, db Execer, p *domain.Reply) e
 
 func (r Repository) ListReplies(ctx context.Context, db Queryer, postId domain.PostID) (domain.Replies, error) {
 	replies := domain.Replies{}
-	sql := `SELECT reply_id, post_id, user_id, title, comment, created, modified FROM reply WHERE post_id = ? ORDER BY reply_id ASC`
-	if err := db.SelectContext(ctx, &replies, sql, int(postId)); err != nil {
+	q := squirrel.
+		Select(
+			"reply_id",
+			"post_id",
+			"user_id",
+			"title",
+			"comment",
+			"created",
+			"modified",
+		).
+		From("reply").
+		OrderBy("created ASC")
+	query, params, err := q.ToSql()
+	if err != nil {
+		return nil, err
+	}
+	if err := db.SelectContext(ctx, &replies, query, params...); err != nil {
 		return nil, err
 	}
 	return replies, nil
