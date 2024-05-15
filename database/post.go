@@ -13,8 +13,21 @@ func (r Repository) SendPost(ctx context.Context, db Execer, p *domain.Post) err
 	// 現在はすべて7777として登録
 	p.Created = r.Clocker.Now()
 	p.Modified = p.Created
-	sql := `INSERT INTO post (user_id, title, comment, created, modified) VALUES (?, ?, ?, ? ,?)`
-	result, err := db.ExecContext(ctx, sql, int(p.UserID), p.Title, p.Comment, p.Created, p.Modified)
+	query, param, err := squirrel.
+		Insert("post").
+		Columns(
+			"user_id",
+			"title",
+			"comment",
+			"created",
+			"modified",
+		).
+		Values(int(p.UserID), p.Title, p.Comment, p.Created, p.Modified).
+		ToSql()
+	if err != nil {
+		return err
+	}
+	result, err := db.ExecContext(ctx, query, param...)
 	if err != nil {
 		return err
 	}
