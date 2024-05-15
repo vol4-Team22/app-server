@@ -32,10 +32,11 @@ type ListPostsUsecase struct {
 
 func (p *ListPostsUsecase) ListPosts(ctx context.Context) (domain.Posts, error) {
 	posts, err := p.Repo.ListPosts(ctx, p.DB)
+
 	if err != nil {
 		return nil, fmt.Errorf("failed to list: %w", err)
 	}
-	return posts, nil
+	return domain.Posts(posts), nil
 }
 
 func (u GetPostUsecase) GetPost(ctx context.Context, postId int) (domain.Post, error) {

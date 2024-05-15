@@ -3,6 +3,8 @@ package database
 import (
 	"context"
 	"mikke-server/domain"
+
+	"github.com/Masterminds/squirrel"
 )
 
 func (r Repository) SendReply(ctx context.Context, db Execer, p *domain.Reply) error {
@@ -10,8 +12,19 @@ func (r Repository) SendReply(ctx context.Context, db Execer, p *domain.Reply) e
 	// 現在はすべて7777として登録
 	p.Created = r.Clocker.Now()
 	p.Modified = p.Created
-	sql := `INSERT INTO reply (post_id, user_id, title, comment, created, modified) VALUES (?, ?, ?, ?, ? ,?)`
-	result, err := db.ExecContext(ctx, sql, int(p.PostID), int(p.UserID), p.Title, p.Comment, p.Created, p.Modified)
+	query, param, err := squirrel.
+		Insert("reply").
+		Columns(
+			"post_id",
+			"user_id",
+			"title",
+			"comment",
+			"created",
+			"modified",
+		).
+		Values(int(p.PostID), int(p.UserID), p.Title, p.Comment, p.Created, p.Modified).
+		ToSql()
+	result, err := db.ExecContext(ctx, query, param...)
 	if err != nil {
 		return err
 	}
@@ -25,8 +38,24 @@ func (r Repository) SendReply(ctx context.Context, db Execer, p *domain.Reply) e
 
 func (r Repository) ListReplies(ctx context.Context, db Queryer, postId domain.PostID) (domain.Replies, error) {
 	replies := domain.Replies{}
-	sql := `SELECT reply_id, post_id, user_id, title, comment, created, modified FROM reply WHERE post_id = ? ORDER BY reply_id ASC`
-	if err := db.SelectContext(ctx, &replies, sql, int(postId)); err != nil {
+	q := squirrel.
+		Select(
+			"reply_id",
+			"post_id",
+			"user_id",
+			"title",
+			"comment",
+			"created",
+			"modified",
+		).
+		From("reply as r").
+		Where(squirrel.Eq{"r.post_id": postId}).
+		OrderBy("created ASC")
+	query, params, err := q.ToSql()
+	if err != nil {
+		return nil, err
+	}
+	if err := db.SelectContext(ctx, &replies, query, params...); err != nil {
 		return nil, err
 	}
 	return replies, nil
