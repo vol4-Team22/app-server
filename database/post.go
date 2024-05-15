@@ -3,9 +3,10 @@ package database
 import (
 	"context"
 	"fmt"
-	"github.com/Masterminds/squirrel"
 	"mikke-server/domain"
 	"time"
+
+	"github.com/Masterminds/squirrel"
 )
 
 func (r Repository) SendPost(ctx context.Context, db Execer, p *domain.Post) error {
