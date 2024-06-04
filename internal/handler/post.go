@@ -25,7 +25,7 @@ func NewPostHandler(u *usecase.PostUsecase, v *validator.Validate) *PostHandler 
 	}
 }
 
-func (h PostHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+func (h PostHandler) SendPost(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 	var b struct {
 		Title   string `json:"title" validate:"required"`
@@ -43,8 +43,7 @@ func (h PostHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		}, http.StatusInternalServerError)
 	}
 	UserID := 7777
-	_, err := h.post.Post(ctx, UserID, b.Title, b.Comment)
-	if err != nil {
+	if err := h.post.SendPost(ctx, UserID, b.Title, b.Comment); err != nil {
 		RespondJSON(ctx, w, &ErrResponse{
 			Message: err.Error(),
 		}, http.StatusInternalServerError)
@@ -53,16 +52,16 @@ func (h PostHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	RespondJSON(ctx, w, nil, http.StatusOK)
 }
 
-func (p ListPosts) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+func (h PostHandler) ListPosts(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
-	posts, err := p.Usecase.ListPosts(ctx)
+	posts, err := h.post.ListPosts(ctx)
 	if err != nil {
 		RespondJSON(ctx, w, &ErrResponse{
 			Message: err.Error(),
 		}, http.StatusInternalServerError)
 		return
 	}
-	rsp := []post{}
+	var rsp []post
 	for _, ps := range posts {
 		rsp = append(rsp, post{
 			PostID:  ps.PostID,
