@@ -9,7 +9,7 @@ import (
 
 type PostUsecase struct {
 	repo domain.PostRepositry
-	db   database.Execer
+	db   database.Interface
 }
 
 func NewPostUsecase(repo domain.PostRepositry, db database.Execer) *PostUsecase {
@@ -27,13 +27,12 @@ func (p *PostUsecase) SendPost(ctx context.Context, user_id int, title, comment 
 	return nil
 }
 
-func (p *ListPostsUsecase) ListPosts(ctx context.Context) (domain2.Posts, error) {
-	posts, err := p.Repo.ListPosts(ctx, p.DB)
-
+func (p *PostUsecase) ListPosts(ctx context.Context) ([]*domain.Post, error) {
+	posts, err := p.repo.ListPosts(ctx, p.db)
 	if err != nil {
 		return nil, fmt.Errorf("failed to list: %w", err)
 	}
-	return domain2.Posts(posts), nil
+	return posts, nil
 }
 
 func (u GetPostUsecase) GetPost(ctx context.Context, postId int) (domain2.Post, error) {
