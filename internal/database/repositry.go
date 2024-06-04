@@ -64,6 +64,8 @@ type Queryer interface {
 }
 
 type Interface interface {
+	Beginner
 	Execer
 	Queryer
+	Preparer
 }
