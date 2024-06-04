@@ -1,12 +1,12 @@
-package main
+package server
 
 import (
 	"context"
 	"mikke-server/config"
-	"mikke-server/database"
-	"mikke-server/handler"
+	"mikke-server/internal/database"
+	"mikke-server/internal/handler"
+	"mikke-server/internal/usecase"
 	"mikke-server/tools/clock"
-	"mikke-server/usecase"
 	"net/http"
 
 	"github.com/go-chi/chi"

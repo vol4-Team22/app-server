@@ -3,7 +3,7 @@ package database
 import (
 	"context"
 	"fmt"
-	"mikke-server/domain"
+	"mikke-server/internal/domain"
 	"time"
 
 	"github.com/Masterminds/squirrel"

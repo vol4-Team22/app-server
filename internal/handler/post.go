@@ -3,8 +3,8 @@ package handler
 import (
 	"context"
 	"encoding/json"
-	"mikke-server/domain"
-	"mikke-server/usecase"
+	domain2 "mikke-server/internal/domain"
+	"mikke-server/internal/usecase"
 	"net/http"
 	"strconv"
 	"time"
@@ -90,18 +90,18 @@ func (p GetPost) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 }
 
 type post struct {
-	PostID  domain.PostID `json:"post_id"`
-	Title   string        `json:"title"`
-	Created time.Time     `json:"created"`
+	PostID  domain2.PostID `json:"post_id"`
+	Title   string         `json:"title"`
+	Created time.Time      `json:"created"`
 }
 
 type post_detail struct {
-	PostID   domain.PostID `json:"post_id"`
-	UserID   domain.UserID `json:"user_ID"`
-	Title    string        `json:"title"`
-	Comment  string        `json:"comment"`
-	Created  time.Time     `json:"created"`
-	Modified time.Time     `json:"modified"`
+	PostID   domain2.PostID `json:"post_id"`
+	UserID   domain2.UserID `json:"user_ID"`
+	Title    string         `json:"title"`
+	Comment  string         `json:"comment"`
+	Created  time.Time      `json:"created"`
+	Modified time.Time      `json:"modified"`
 }
 
 type SendPost struct {
@@ -110,7 +110,7 @@ type SendPost struct {
 }
 
 type PostQuestionsUsecace interface {
-	SendPost(ctx context.Context, user_id int, title string, comment string) (*domain.Post, error)
+	SendPost(ctx context.Context, user_id int, title string, comment string) (*domain2.Post, error)
 }
 
 type ListPosts struct {
@@ -118,7 +118,7 @@ type ListPosts struct {
 }
 
 type ListPostsUsecase interface {
-	ListPosts(ctx context.Context) (domain.Posts, error)
+	ListPosts(ctx context.Context) (domain2.Posts, error)
 }
 
 type GetPost struct {
@@ -126,5 +126,5 @@ type GetPost struct {
 }
 
 type GetPostUsecase interface {
-	GetPost(ctx context.Context, postId int) (*domain.Post, error)
+	GetPost(ctx context.Context, postId int) (*domain2.Post, error)
 }

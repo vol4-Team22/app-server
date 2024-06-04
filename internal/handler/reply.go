@@ -3,8 +3,8 @@ package handler
 import (
 	"context"
 	"encoding/json"
-	"mikke-server/domain"
-	"mikke-server/usecase"
+	domain2 "mikke-server/internal/domain"
+	"mikke-server/internal/usecase"
 	"net/http"
 	"strconv"
 
@@ -31,9 +31,9 @@ func (p SendReply) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		}, http.StatusInternalServerError)
 	}
 	UserID := 7777
-	reply := &domain.Reply{
-		PostID:  domain.PostID(b.PostID),
-		UserID:  domain.UserID(UserID),
+	reply := &domain2.Reply{
+		PostID:  domain2.PostID(b.PostID),
+		UserID:  domain2.UserID(UserID),
 		Title:   b.Title,
 		Comment: b.Comment,
 	}
@@ -51,16 +51,16 @@ func (p ListReplies) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 	postIDStr := chi.URLParam(r, "post_id")
 	postID, err := strconv.Atoi(postIDStr)
-	posts, err := p.Usecase.ListReplies(ctx, domain.PostID(postID))
+	posts, err := p.Usecase.ListReplies(ctx, domain2.PostID(postID))
 	if err != nil {
 		RespondJSON(ctx, w, &ErrResponse{
 			Message: err.Error(),
 		}, http.StatusInternalServerError)
 		return
 	}
-	rsp := []domain.Reply{}
+	rsp := []domain2.Reply{}
 	for _, ps := range posts {
-		rsp = append(rsp, domain.Reply{
+		rsp = append(rsp, domain2.Reply{
 			ReplyID:  ps.ReplyID,
 			PostID:   ps.PostID,
 			UserID:   ps.UserID,
@@ -79,7 +79,7 @@ type SendReply struct {
 }
 
 type SendReplyUsecase interface {
-	SendReply(ctx context.Context, reply *domain.Reply) (*domain.Reply, error)
+	SendReply(ctx context.Context, reply *domain2.Reply) (*domain2.Reply, error)
 }
 
 type ListReplies struct {
@@ -87,5 +87,5 @@ type ListReplies struct {
 }
 
 type ListRepliesUsecase interface {
-	ListReplies(ctx context.Context, postID domain.PostID) (domain.Replies, error)
+	ListReplies(ctx context.Context, postID domain2.PostID) (domain2.Replies, error)
 }
