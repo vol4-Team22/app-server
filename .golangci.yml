@@ -7,7 +7,6 @@ linters-settings:
 linters:
   disable-all: true
   enable:
-    - goimports
     - deadcode
     - errcheck
     - gofmt
