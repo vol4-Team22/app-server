@@ -1,9 +1,8 @@
 package handler
 
 import (
-	"context"
 	"encoding/json"
-	domain2 "mikke-server/internal/domain"
+	"mikke-server/internal/domain"
 	"mikke-server/internal/usecase"
 	"net/http"
 	"strconv"
@@ -72,7 +71,7 @@ func (h PostHandler) ListPosts(w http.ResponseWriter, r *http.Request) {
 	RespondJSON(ctx, w, rsp, http.StatusOK)
 }
 
-func (p GetPost) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+func (p PostHandler) GetPost(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 	postIDStr := chi.URLParam(r, "post_id")
 	postID, err := strconv.Atoi(postIDStr)
@@ -82,7 +81,7 @@ func (p GetPost) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		}, http.StatusInternalServerError)
 		return
 	}
-	post, err := p.Usecase.GetPost(ctx, postID)
+	post, err := p.post.GetPost(ctx, postID)
 	if err != nil {
 		RespondJSON(ctx, w, &ErrResponse{
 			Message: err.Error(),
@@ -101,36 +100,16 @@ func (p GetPost) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 }
 
 type post struct {
-	PostID  domain2.PostID `json:"post_id"`
-	Title   string         `json:"title"`
-	Created time.Time      `json:"created"`
+	PostID  domain.PostID `json:"post_id"`
+	Title   string        `json:"title"`
+	Created time.Time     `json:"created"`
 }
 
 type post_detail struct {
-	PostID   domain2.PostID `json:"post_id"`
-	UserID   domain2.UserID `json:"user_ID"`
-	Title    string         `json:"title"`
-	Comment  string         `json:"comment"`
-	Created  time.Time      `json:"created"`
-	Modified time.Time      `json:"modified"`
-}
-
-type PostQuestionsUsecace interface {
-	SendPost(ctx context.Context, user_id int, title string, comment string) (*domain2.Post, error)
-}
-
-type ListPosts struct {
-	Usecase usecase.ListPostsUsecase
-}
-
-type ListPostsUsecase interface {
-	ListPosts(ctx context.Context) (domain2.Posts, error)
-}
-
-type GetPost struct {
-	Usecase usecase.GetPostUsecase
-}
-
-type GetPostUsecase interface {
-	GetPost(ctx context.Context, postId int) (*domain2.Post, error)
+	PostID   domain.PostID `json:"post_id"`
+	UserID   domain.UserID `json:"user_ID"`
+	Title    string        `json:"title"`
+	Comment  string        `json:"comment"`
+	Created  time.Time     `json:"created"`
+	Modified time.Time     `json:"modified"`
 }
