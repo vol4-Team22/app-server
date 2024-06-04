@@ -4,30 +4,27 @@ import (
 	"context"
 	"fmt"
 	"mikke-server/internal/database"
-	domain2 "mikke-server/internal/domain"
+	"mikke-server/internal/domain"
 )
 
 type PostUsecase struct {
-	Repo PostAdder
-	DB   database.Execer
+	repo domain.PostRepositry
+	db   database.Execer
 }
 
-func (p *PostUsecase) SendPost(ctx context.Context, user_id int, title string, comment string) (*domain2.Post, error) {
-	post := &domain2.Post{
-		UserID:  domain2.UserID(user_id),
-		Title:   title,
-		Comment: comment,
+func NewPostUsecase(repo domain.PostRepositry, db database.Execer) *PostUsecase {
+	return &PostUsecase{
+		repo: repo,
+		db:   db,
 	}
-	err := p.Repo.SendPost(ctx, p.DB, post)
+}
+
+func (p *PostUsecase) SendPost(ctx context.Context, user_id int, title, comment string) error {
+	err := p.repo.SendPost(ctx, p.db, user_id, title, comment)
 	if err != nil {
-		return nil, err
+		return err
 	}
-	return post, nil
-}
-
-type ListPostsUsecase struct {
-	Repo PostLister
-	DB   database.Queryer
+	return nil
 }
 
 func (p *ListPostsUsecase) ListPosts(ctx context.Context) (domain2.Posts, error) {
@@ -48,6 +45,6 @@ func (u GetPostUsecase) GetPost(ctx context.Context, postId int) (domain2.Post, 
 }
 
 type GetPostUsecase struct {
-	Repo PostGeter
+	Repo domain.PostGeter
 	DB   database.Queryer
 }

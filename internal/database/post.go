@@ -9,11 +9,12 @@ import (
 	"github.com/Masterminds/squirrel"
 )
 
-func (r Repository) SendPost(ctx context.Context, db Execer, p *domain.Post) error {
+func (r Repository) SendPost(ctx context.Context, db Execer, user_id int, title, comment string) error {
 	// TODO: 認証機能を実装後変更
 	// 現在はすべて7777として登録
-	p.Created = r.Clocker.Now()
-	p.Modified = p.Created
+	var created, modified time.Time
+	created = r.Clocker.Now()
+	modified = created
 	query, param, err := squirrel.
 		Insert("post").
 		Columns(
@@ -23,20 +24,15 @@ func (r Repository) SendPost(ctx context.Context, db Execer, p *domain.Post) err
 			"created",
 			"modified",
 		).
-		Values(int(p.UserID), p.Title, p.Comment, p.Created, p.Modified).
+		Values(user_id, title, comment, created, modified).
 		ToSql()
 	if err != nil {
 		return err
 	}
-	result, err := db.ExecContext(ctx, query, param...)
+	_, err = db.ExecContext(ctx, query, param...)
 	if err != nil {
 		return err
 	}
-	id, err := result.LastInsertId()
-	if err != nil {
-		return err
-	}
-	p.PostID = domain.PostID(id)
 	return nil
 }
 

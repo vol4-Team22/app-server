@@ -8,7 +8,7 @@ import (
 )
 
 type SendReplyUsecase struct {
-	Repo ReplyAdder
+	Repo domain2.ReplyAdder
 	DB   database.Execer
 }
 
@@ -29,6 +29,6 @@ func (p *ListRepliesUsecase) ListReplies(ctx context.Context, postID domain2.Pos
 }
 
 type ListRepliesUsecase struct {
-	Repo ReplyLister
+	Repo domain2.ReplyLister
 	DB   database.Queryer
 }
