@@ -12,7 +12,7 @@ type PostUsecase struct {
 	db   database.Interface
 }
 
-func NewPostUsecase(repo domain.PostRepositry, db database.Execer) *PostUsecase {
+func NewPostUsecase(repo domain.PostRepositry, db database.Interface) *PostUsecase {
 	return &PostUsecase{
 		repo: repo,
 		db:   db,
@@ -30,20 +30,15 @@ func (p *PostUsecase) SendPost(ctx context.Context, user_id int, title, comment 
 func (p *PostUsecase) ListPosts(ctx context.Context) ([]*domain.Post, error) {
 	posts, err := p.repo.ListPosts(ctx, p.db)
 	if err != nil {
-		return nil, fmt.Errorf("failed to list: %w", err)
+		return nil, fmt.Errorf("failed to list posts: %w", err)
 	}
 	return posts, nil
 }
 
-func (u GetPostUsecase) GetPost(ctx context.Context, postId int) (domain2.Post, error) {
-	post, err := u.Repo.GetPost(ctx, u.DB, domain2.PostID(postId))
+func (p *PostUsecase) GetPost(ctx context.Context, post_id int) (*domain.Post, error) {
+	post, err := p.repo.GetPost(ctx, p.db, post_id)
 	if err != nil {
-		return domain2.Post{}, fmt.Errorf("failed to get: %w", err)
+		return nil, fmt.Errorf("failed to get post: %w", err)
 	}
 	return post, nil
-}
-
-type GetPostUsecase struct {
-	Repo domain.PostGeter
-	DB   database.Queryer
 }
