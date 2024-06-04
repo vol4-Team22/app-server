@@ -62,3 +62,8 @@ type Queryer interface {
 	GetContext(ctx context.Context, dest interface{}, query string, args ...any) error
 	SelectContext(ctx context.Context, dest interface{}, query string, args ...any) error
 }
+
+type Interface interface {
+	Execer
+	Queryer
+}
