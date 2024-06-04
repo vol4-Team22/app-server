@@ -64,7 +64,7 @@ func (r Repository) ListPosts(ctx context.Context, db Queryer) ([]*domain.Post, 
 	return posts, nil
 }
 
-func (r Repository) GetPost(ctx context.Context, db Queryer, postId domain.PostID) (domain.Post, error) {
+func (r Repository) GetPost(ctx context.Context, db Queryer, postId int) (domain.Post, error) {
 	post := domain.Post{}
 	q := squirrel.
 		Select(
