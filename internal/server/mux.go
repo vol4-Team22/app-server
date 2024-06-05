@@ -2,7 +2,7 @@ package server
 
 import (
 	"context"
-	"mikke-server/config"
+	"mikke-server/internal/config"
 	"mikke-server/internal/database"
 	"mikke-server/internal/handler"
 	"mikke-server/internal/usecase"
@@ -22,30 +22,22 @@ func NewMux(ctx context.Context, cfg *config.Config) (http.Handler, func(), erro
 	r := database.Repository{Clocker: clock.RealClocker{}}
 	v := validator.New()
 	db, cleanup, err := database.New(ctx, cfg)
+	u := usecase.NewPostUsecase(r, db)
+	hd := handler.NewPostHandler(u, v)
 	if err != nil {
 		return nil, cleanup, err
 	}
-	ps := &handler.SendPost{
-		Usecase:   usecase.PostUsecase{DB: db, Repo: &r},
-		Validator: v,
-	}
-	mux.Post("/post", ps.ServeHTTP)
-	lp := &handler.ListPosts{
-		Usecase: usecase.ListPostsUsecase{DB: db, Repo: &r},
-	}
-	mux.Get("/list", lp.ServeHTTP)
-	lt := &handler.GetPost{
-		Usecase: usecase.GetPostUsecase{DB: db, Repo: &r},
-	}
-	mux.Get("/post/{post_id}", lt.ServeHTTP)
-	sr := &handler.SendReply{
-		Usecase:   usecase.SendReplyUsecase{DB: db, Repo: &r},
-		Validator: v,
-	}
-	mux.Post("/reply", sr.ServeHTTP)
-	lr := &handler.ListReplies{
-		Usecase: usecase.ListRepliesUsecase{DB: db, Repo: &r},
-	}
-	mux.Get("/reply/list/{post_id}", lr.ServeHTTP)
+	mux.Post("/post", hd.SendPost)
+	mux.Get("/list", hd.ListPosts)
+	mux.Get("/post/{post_id}", hd.GetPost)
+	//sr := &handler.SendReply{
+	//	Usecase:   usecase.SendReplyUsecase{DB: db, Repo: &r},
+	//	Validator: v,
+	//}
+	//mux.Post("/reply", sr.ServeHTTP)
+	//lr := &handler.ListReplies{
+	//	Usecase: usecase.ListRepliesUsecase{DB: db, Repo: &r},
+	//}
+	//mux.Get("/reply/list/{post_id}", lr.ServeHTTP)
 	return mux, cleanup, err
 }
