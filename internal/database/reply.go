@@ -2,8 +2,9 @@ package database
 
 import (
 	"context"
-	"github.com/Masterminds/squirrel"
 	"mikke-server/internal/domain"
+
+	"github.com/Masterminds/squirrel"
 )
 
 func (r Repository) SendReply(ctx context.Context, db Execer, p *domain.Reply) error {
