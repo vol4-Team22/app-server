@@ -2,7 +2,7 @@ package handler
 
 import (
 	"encoding/json"
-	"mikke-server/internal/domain"
+	domain2 "mikke-server/internal/domain"
 	"mikke-server/internal/usecase"
 	"net/http"
 	"strconv"
@@ -48,7 +48,7 @@ func (h PostHandler) SendPost(w http.ResponseWriter, r *http.Request) {
 		}, http.StatusInternalServerError)
 		return
 	}
-	RespondJSON(ctx, w, nil, http.StatusOK)
+	RespondJSON(ctx, w, "Correctly posted!!", http.StatusOK)
 }
 
 func (h PostHandler) ListPosts(w http.ResponseWriter, r *http.Request) {
@@ -100,16 +100,16 @@ func (p PostHandler) GetPost(w http.ResponseWriter, r *http.Request) {
 }
 
 type post struct {
-	PostID  domain.PostID `json:"post_id"`
-	Title   string        `json:"title"`
-	Created time.Time     `json:"created"`
+	PostID  domain2.PostID `json:"post_id"`
+	Title   string         `json:"title"`
+	Created time.Time      `json:"created"`
 }
 
 type post_detail struct {
-	PostID   domain.PostID `json:"post_id"`
-	UserID   domain.UserID `json:"user_ID"`
-	Title    string        `json:"title"`
-	Comment  string        `json:"comment"`
-	Created  time.Time     `json:"created"`
-	Modified time.Time     `json:"modified"`
+	PostID   domain2.PostID `json:"post_id"`
+	UserID   domain2.UserID `json:"user_ID"`
+	Title    string         `json:"title"`
+	Comment  string         `json:"comment"`
+	Created  time.Time      `json:"created"`
+	Modified time.Time      `json:"modified"`
 }
