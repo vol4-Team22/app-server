@@ -2,12 +2,11 @@ package database
 
 import (
 	"context"
-	domain2 "mikke-server/internal/domain"
-
 	"github.com/Masterminds/squirrel"
+	"mikke-server/internal/domain"
 )
 
-func (r Repository) SendReply(ctx context.Context, db Execer, p *domain2.Reply) error {
+func (r Repository) SendReply(ctx context.Context, db Execer, p *domain.Reply) error {
 	// TODO: 認証機能を実装後変更
 	// 現在はすべて7777として登録
 	p.Created = r.Clocker.Now()
@@ -32,12 +31,12 @@ func (r Repository) SendReply(ctx context.Context, db Execer, p *domain2.Reply) 
 	if err != nil {
 		return err
 	}
-	p.ReplyID = domain2.ReplyID(id)
+	p.ReplyID = domain.ReplyID(id)
 	return nil
 }
 
-func (r Repository) ListReplies(ctx context.Context, db Queryer, postId domain2.PostID) (domain2.Replies, error) {
-	replies := domain2.Replies{}
+func (r Repository) ListReplies(ctx context.Context, db Queryer, postId domain.PostID) (domain.Replies, error) {
+	replies := domain.Replies{}
 	q := squirrel.
 		Select(
 			"reply_id",
