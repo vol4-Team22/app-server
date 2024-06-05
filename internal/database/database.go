@@ -5,7 +5,7 @@ import (
 	"database/sql"
 	"errors"
 	"fmt"
-	"mikke-server/config"
+	"mikke-server/internal/config"
 	"mikke-server/tools/clock"
 	"time"
 
@@ -61,4 +61,11 @@ type Queryer interface {
 	QueryRowxContext(ctx context.Context, query string, args ...any) *sqlx.Row
 	GetContext(ctx context.Context, dest interface{}, query string, args ...any) error
 	SelectContext(ctx context.Context, dest interface{}, query string, args ...any) error
+}
+
+type Interface interface {
+	Beginner
+	Execer
+	Queryer
+	Preparer
 }

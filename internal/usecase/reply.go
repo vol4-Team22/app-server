@@ -3,12 +3,12 @@ package usecase
 import (
 	"context"
 	"fmt"
-	"mikke-server/database"
-	"mikke-server/domain"
+	"mikke-server/internal/database"
+	"mikke-server/internal/domain"
 )
 
 type SendReplyUsecase struct {
-	Repo ReplyAdder
+	Repo database.ReplyAdder
 	DB   database.Execer
 }
 
@@ -29,6 +29,6 @@ func (p *ListRepliesUsecase) ListReplies(ctx context.Context, postID domain.Post
 }
 
 type ListRepliesUsecase struct {
-	Repo ReplyLister
+	Repo database.ReplyLister
 	DB   database.Queryer
 }

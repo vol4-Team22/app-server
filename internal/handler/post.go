@@ -1,10 +1,9 @@
 package handler
 
 import (
-	"context"
 	"encoding/json"
-	"mikke-server/domain"
-	"mikke-server/usecase"
+	domain2 "mikke-server/internal/domain"
+	"mikke-server/internal/usecase"
 	"net/http"
 	"strconv"
 	"time"
@@ -13,7 +12,19 @@ import (
 	"github.com/go-playground/validator/v10"
 )
 
-func (p SendPost) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+type PostHandler struct {
+	post      *usecase.PostUsecase
+	Validator *validator.Validate
+}
+
+func NewPostHandler(u *usecase.PostUsecase, v *validator.Validate) *PostHandler {
+	return &PostHandler{
+		post:      u,
+		Validator: v,
+	}
+}
+
+func (h PostHandler) SendPost(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 	var b struct {
 		Title   string `json:"title" validate:"required"`
@@ -25,32 +36,31 @@ func (p SendPost) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		}, http.StatusInternalServerError)
 		return
 	}
-	if err := p.Validator.Struct(b); err != nil {
+	if err := h.Validator.Struct(b); err != nil {
 		RespondJSON(ctx, w, &ErrResponse{
 			Message: err.Error(),
 		}, http.StatusInternalServerError)
 	}
 	UserID := 7777
-	_, err := p.Usecase.SendPost(ctx, UserID, b.Title, b.Comment)
-	if err != nil {
+	if err := h.post.SendPost(ctx, UserID, b.Title, b.Comment); err != nil {
 		RespondJSON(ctx, w, &ErrResponse{
 			Message: err.Error(),
 		}, http.StatusInternalServerError)
 		return
 	}
-	RespondJSON(ctx, w, nil, http.StatusOK)
+	RespondJSON(ctx, w, "Correctly posted!!", http.StatusOK)
 }
 
-func (p ListPosts) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+func (h PostHandler) ListPosts(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
-	posts, err := p.Usecase.ListPosts(ctx)
+	posts, err := h.post.ListPosts(ctx)
 	if err != nil {
 		RespondJSON(ctx, w, &ErrResponse{
 			Message: err.Error(),
 		}, http.StatusInternalServerError)
 		return
 	}
-	rsp := []post{}
+	var rsp []post
 	for _, ps := range posts {
 		rsp = append(rsp, post{
 			PostID:  ps.PostID,
@@ -61,7 +71,7 @@ func (p ListPosts) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	RespondJSON(ctx, w, rsp, http.StatusOK)
 }
 
-func (p GetPost) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+func (p PostHandler) GetPost(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 	postIDStr := chi.URLParam(r, "post_id")
 	postID, err := strconv.Atoi(postIDStr)
@@ -71,7 +81,7 @@ func (p GetPost) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		}, http.StatusInternalServerError)
 		return
 	}
-	post, err := p.Usecase.GetPost(ctx, postID)
+	post, err := p.post.GetPost(ctx, postID)
 	if err != nil {
 		RespondJSON(ctx, w, &ErrResponse{
 			Message: err.Error(),
@@ -90,41 +100,16 @@ func (p GetPost) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 }
 
 type post struct {
-	PostID  domain.PostID `json:"post_id"`
-	Title   string        `json:"title"`
-	Created time.Time     `json:"created"`
+	PostID  domain2.PostID `json:"post_id"`
+	Title   string         `json:"title"`
+	Created time.Time      `json:"created"`
 }
 
 type post_detail struct {
-	PostID   domain.PostID `json:"post_id"`
-	UserID   domain.UserID `json:"user_ID"`
-	Title    string        `json:"title"`
-	Comment  string        `json:"comment"`
-	Created  time.Time     `json:"created"`
-	Modified time.Time     `json:"modified"`
-}
-
-type SendPost struct {
-	Usecase   usecase.PostUsecase
-	Validator *validator.Validate
-}
-
-type PostQuestionsUsecace interface {
-	SendPost(ctx context.Context, user_id int, title string, comment string) (*domain.Post, error)
-}
-
-type ListPosts struct {
-	Usecase usecase.ListPostsUsecase
-}
-
-type ListPostsUsecase interface {
-	ListPosts(ctx context.Context) (domain.Posts, error)
-}
-
-type GetPost struct {
-	Usecase usecase.GetPostUsecase
-}
-
-type GetPostUsecase interface {
-	GetPost(ctx context.Context, postId int) (*domain.Post, error)
+	PostID   domain2.PostID `json:"post_id"`
+	UserID   domain2.UserID `json:"user_ID"`
+	Title    string         `json:"title"`
+	Comment  string         `json:"comment"`
+	Created  time.Time      `json:"created"`
+	Modified time.Time      `json:"modified"`
 }

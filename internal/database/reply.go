@@ -2,7 +2,7 @@ package database
 
 import (
 	"context"
-	"mikke-server/domain"
+	"mikke-server/internal/domain"
 
 	"github.com/Masterminds/squirrel"
 )

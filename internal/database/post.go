@@ -3,17 +3,18 @@ package database
 import (
 	"context"
 	"fmt"
-	"mikke-server/domain"
+	"mikke-server/internal/domain"
 	"time"
 
 	"github.com/Masterminds/squirrel"
 )
 
-func (r Repository) SendPost(ctx context.Context, db Execer, p *domain.Post) error {
+func (r Repository) SendPost(ctx context.Context, db Execer, user_id int, title, comment string) error {
 	// TODO: 認証機能を実装後変更
 	// 現在はすべて7777として登録
-	p.Created = r.Clocker.Now()
-	p.Modified = p.Created
+	var created, modified time.Time
+	created = r.Clocker.Now()
+	modified = created
 	query, param, err := squirrel.
 		Insert("post").
 		Columns(
@@ -23,20 +24,15 @@ func (r Repository) SendPost(ctx context.Context, db Execer, p *domain.Post) err
 			"created",
 			"modified",
 		).
-		Values(int(p.UserID), p.Title, p.Comment, p.Created, p.Modified).
+		Values(user_id, title, comment, created, modified).
 		ToSql()
 	if err != nil {
 		return err
 	}
-	result, err := db.ExecContext(ctx, query, param...)
+	_, err = db.ExecContext(ctx, query, param...)
 	if err != nil {
 		return err
 	}
-	id, err := result.LastInsertId()
-	if err != nil {
-		return err
-	}
-	p.PostID = domain.PostID(id)
 	return nil
 }
 
@@ -68,8 +64,8 @@ func (r Repository) ListPosts(ctx context.Context, db Queryer) ([]*domain.Post, 
 	return posts, nil
 }
 
-func (r Repository) GetPost(ctx context.Context, db Queryer, postId domain.PostID) (domain.Post, error) {
-	post := domain.Post{}
+func (r Repository) GetPost(ctx context.Context, db Queryer, postId int) (*domain.Post, error) {
+	var post Post
 	q := squirrel.
 		Select(
 			"post_id",
@@ -83,12 +79,13 @@ func (r Repository) GetPost(ctx context.Context, db Queryer, postId domain.PostI
 		Where(squirrel.Eq{"p.post_id": postId})
 	query, params, err := q.ToSql()
 	if err != nil {
-		return domain.Post{}, fmt.Errorf("error in ToSql")
+		return nil, fmt.Errorf("error in ToSql")
 	}
 	if err := db.GetContext(ctx, &post, query, params...); err != nil {
-		return domain.Post{}, err
+		return nil, err
 	}
-	return post, nil
+	rsp := post.postToDomain()
+	return rsp, nil
 }
 
 type Post struct {
