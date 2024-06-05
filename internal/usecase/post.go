@@ -8,11 +8,11 @@ import (
 )
 
 type PostUsecase struct {
-	repo domain.PostRepositry
+	repo database.Repository
 	db   database.Interface
 }
 
-func NewPostUsecase(repo domain.PostRepositry, db database.Interface) *PostUsecase {
+func NewPostUsecase(repo database.Repository, db database.Interface) *PostUsecase {
 	return &PostUsecase{
 		repo: repo,
 		db:   db,
