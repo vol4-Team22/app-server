@@ -64,8 +64,8 @@ func (r Repository) ListPosts(ctx context.Context, db Queryer) ([]*domain.Post, 
 	return posts, nil
 }
 
-func (r Repository) GetPost(ctx context.Context, db Queryer, postId int) (domain.Post, error) {
-	post := domain.Post{}
+func (r Repository) GetPost(ctx context.Context, db Queryer, postId int) (*domain.Post, error) {
+	var post Post
 	q := squirrel.
 		Select(
 			"post_id",
@@ -79,12 +79,13 @@ func (r Repository) GetPost(ctx context.Context, db Queryer, postId int) (domain
 		Where(squirrel.Eq{"p.post_id": postId})
 	query, params, err := q.ToSql()
 	if err != nil {
-		return domain.Post{}, fmt.Errorf("error in ToSql")
+		return nil, fmt.Errorf("error in ToSql")
 	}
 	if err := db.GetContext(ctx, &post, query, params...); err != nil {
-		return domain.Post{}, err
+		return nil, err
 	}
-	return post, nil
+	rsp := post.postToDomain()
+	return rsp, nil
 }
 
 type Post struct {
